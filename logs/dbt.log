@@ -1,0 +1,30 @@
+[0m09:15:32.127430 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DCF11173D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DCF37C8C10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DCF37C8F70>]}
+
+
+============================== 09:15:32.131430 | 29d5f9d9-2fb6-4302-ad01-54b5ce1e2e94 ==============================
+[0m09:15:32.131430 [info ] [MainThread]: Running with dbt=1.10.20
+[0m09:15:32.132430 [debug] [MainThread]: running dbt with arguments {'invocation_command': 'dbt init marketplace_dw', 'use_colors': 'True', 'empty': 'None', 'fail_fast': 'False', 'static_parser': 'True', 'log_format': 'default', 'use_experimental_parser': 'False', 'warn_error': 'None', 'introspect': 'True', 'cache_selected_only': 'False', 'quiet': 'False', 'log_cache_events': 'False', 'write_json': 'True', 'log_path': 'logs', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'partial_parse': 'True', 'debug': 'False', 'printer_width': '80', 'send_anonymous_usage_stats': 'True', 'version_check': 'True', 'indirect_selection': 'eager', 'profiles_dir': 'C:\\Users\\USUARIO\\.dbt', 'no_print': 'None'}
+[0m09:15:32.145655 [info ] [MainThread]: Creating dbt configuration folder at C:\Users\USUARIO\.dbt
+[0m09:15:32.147660 [debug] [MainThread]: Starter project path: E:\Carlos\Documentos\Marketplace DW\marketplace_dw_project\dbt_env_39\lib\site-packages\dbt\include\starter_project
+[0m09:15:32.160942 [info ] [MainThread]: 
+Your new dbt project "marketplace_dw" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m09:15:32.161941 [info ] [MainThread]: Setting up your profile.
+[0m09:29:25.148283 [info ] [MainThread]: Profile marketplace_dw written to C:\Users\USUARIO\.dbt\profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m09:29:25.149283 [debug] [MainThread]: Command `dbt init` succeeded at 09:29:25.149283 after 833.08 seconds
+[0m09:29:25.150786 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DCF11173D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DCF3834670>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001DCF377C940>]}
+[0m09:29:25.150786 [debug] [MainThread]: Flushing usage events
+[0m09:29:25.779367 [debug] [MainThread]: An error was encountered while trying to flush usage events

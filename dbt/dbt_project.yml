@@ -1,0 +1,21 @@
+name: 'marketplace_dw'
+version: '1.0.0'
+
+config-version: 2
+
+profile: 'marketplace_dw'
+
+model-paths: ["models"]
+analysis-paths: ["analysis"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  marketplace_dw:
+    +materialized: view

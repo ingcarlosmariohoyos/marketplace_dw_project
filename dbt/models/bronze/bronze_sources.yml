@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: public
+    tables:
+      - name: bronze_orders
+      - name: bronze_products
+      - name: bronze_customers

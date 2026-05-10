@@ -1,0 +1,15 @@
+# Entorno Virtual
+dbt_env_39/
+
+# dbt Artifacts (Archivos que se generan solos)
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+marketplace_dw/
+
+# Python temporales
+**/__pycache__/
+*.pyc
+
+# Credenciales (MUY IMPORTANTE)
+dbt/profiles.yml
