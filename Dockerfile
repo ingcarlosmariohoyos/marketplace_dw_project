@@ -27,4 +27,4 @@ EXPOSE 3000
 
 # 8. Comando por defecto: Activa el entorno virtual y arranca Dagster en modo producción
 # Escucha en 0.0.0.0 para que plataformas como Render puedan redirigir el tráfico web
-CMD ["./dbt_env_39/bin/dagster", "dev", "-h", "0.0.0.0", "-p", "3000", "-f", "dagster_project/definitions.py"]
+CMD ["./dbt_env_39/bin/dagster-webserver", "-h", "0.0.0.0", "-p", "3000", "-f", "dagster_project/definitions.py"]
