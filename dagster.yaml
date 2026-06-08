@@ -5,9 +5,3 @@ run_coordinator:
 run_launcher:
   module: dagster._core.launcher
   class: DefaultRunLauncher
-
-# CONFIGURACIÓN CRÍTICA PARA CAPA GRATUITA:
-# Evita abrir subprocesos paralelos pesados y corre todo de forma síncrona
-executor:
-  module: dagster._core.executor
-  class: in_process_executor

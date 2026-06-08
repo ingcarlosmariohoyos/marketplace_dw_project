@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
-from dagster import Definitions, AssetExecutionContext, define_asset_job, ScheduleDefinition
+# Agregamos in_process_executor a las importaciones de dagster
+from dagster import Definitions, AssetExecutionContext, define_asset_job, ScheduleDefinition, in_process_executor
 from dagster_dbt import DbtCliResource, DbtProject, dbt_assets
 
 # ==============================================================================
@@ -11,13 +12,11 @@ DBT_PROJECT_DIR = BASE_DIR / "dbt"
 DBT_EXECUTABLE_PATH = BASE_DIR / "dbt_env_39" / "bin" / "dbt"
 
 # ==============================================================================
-# EN PRODUCION (RENDER): Generar el manifest.json si no existe antes de arrancar
+# EN PRODUCCIÓN (RENDER): Generar el manifest.json si no existe antes de arrancar
 # ==============================================================================
-MANIFEST_PATH = DBT_PROJECT_DIR / "target" / "manifest.json"
+MANIFEST_PATH = (DBT_PROJECT_DIR / "target" / "manifest.json").resolve()
 
 if not MANIFEST_PATH.exists():
-    # Si estamos en Render, ejecutamos un 'dbt parse' usando el CLI resource de forma interna
-    # para crear el archivo manifest.json sin alterar nada más.
     import subprocess
     print("Manifest no encontrado. Generando manifest.json de forma dinámica...")
     subprocess.run(
@@ -31,7 +30,7 @@ dbt_project = DbtProject(project_dir=DBT_PROJECT_DIR)
 dbt_project.prepare_if_dev()
 
 # ==============================================================================
-# ASSETS, JOBS Y DEFINICIONES (Sigue igual)
+# ASSETS, JOBS Y DEFINICIONES
 # ==============================================================================
 @dbt_assets(manifest=dbt_project.manifest_path)
 def dbt_assets_def(context: AssetExecutionContext, dbt: DbtCliResource):
@@ -54,4 +53,7 @@ defs = Definitions(
             dbt_executable=os.fspath(DBT_EXECUTABLE_PATH)
         ),
     },
+    # CONFIGURACIÓN DE EJECUTOR: Corre de forma síncrona dentro del proceso principal
+    # para mitigar el límite de 512 MB de RAM en Render.
+    executor_def=in_process_executor,
 )
