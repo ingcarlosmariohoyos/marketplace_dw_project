@@ -1,5 +1,3 @@
-# Cambiamos a DefaultRunCoordinator para que el servidor web ejecute 
-# la tarea inmediatamente en lugar de meterla en una fila de espera.
 run_coordinator:
   module: dagster._core.run_coordinator
   class: DefaultRunCoordinator
@@ -7,3 +5,9 @@ run_coordinator:
 run_launcher:
   module: dagster._core.launcher
   class: DefaultRunLauncher
+
+# CONFIGURACIÓN CRÍTICA PARA CAPA GRATUITA:
+# Evita abrir subprocesos paralelos pesados y corre todo de forma síncrona
+executor:
+  module: dagster._core.executor
+  class: in_process_executor
