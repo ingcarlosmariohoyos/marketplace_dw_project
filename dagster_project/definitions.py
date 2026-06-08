@@ -53,7 +53,6 @@ defs = Definitions(
             dbt_executable=os.fspath(DBT_EXECUTABLE_PATH)
         ),
     },
-    # CONFIGURACIÓN DE EJECUTOR: Corre de forma síncrona dentro del proceso principal
-    # para mitigar el límite de 512 MB de RAM en Render.
-    executor_def=in_process_executor,
+    # CORRECCIÓN: El parámetro correcto es 'executor', no 'executor_def'
+    executor=in_process_executor,
 )
