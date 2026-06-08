@@ -25,6 +25,8 @@ COPY . .
 # 7. Exponer el puerto 3000 que es el que usa la interfaz de Dagster
 EXPOSE 3000
 
-# 8. Comando por defecto: Activa el entorno virtual y arranca Dagster en modo producción
-# Escucha en 0.0.0.0 para que plataformas como Render puedan redirigir el tráfico web
+# Definimos la raíz del contenedor como el hogar de Dagster
+ENV DAGSTER_HOME=/app
+
+# El resto de tu Dockerfile sigue igual...
 CMD ["./dbt_env_39/bin/dagster-webserver", "-h", "0.0.0.0", "-p", "3000", "-f", "dagster_project/definitions.py"]
