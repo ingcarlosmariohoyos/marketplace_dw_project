@@ -1,5 +1,5 @@
 # 1. Usamos una imagen oficial de Python ligera basada en Debian
-FROM python:3.9-slim
+FROM python:3.11-slim
 
 # 2. Instalar dependencias del sistema necesarias para compilar PostgreSQL y dbt
 RUN apt-get update && apt-get install -y \
