@@ -1,35 +1,13 @@
 import os
-from pathlib import Path
-from dagster import Definitions, AssetExecutionContext, define_asset_job, ScheduleDefinition
-from dagster_dbt import DbtCliResource, DbtProject, dbt_assets
-
-# ==============================================================================
-# CONFIGURACIÓN DE RUTAS
-# ==============================================================================
-BASE_DIR = Path(__file__).resolve().parent.parent
-DBT_PROJECT_DIR = BASE_DIR / "dbt"
-
-# DbtProject maneja el manifest automáticamente
-dbt_project = DbtProject(project_dir=DBT_PROJECT_DIR)
-dbt_project.prepare_if_dev()
-
-# ==============================================================================
-# ASSETS, JOBS Y DEFINICIONES
-# ==============================================================================
-@dbt_assets(manifest=dbt_project.manifest_path)
-def dbt_assets_def(context: AssetExecutionContext, dbt: DbtCliResource):
-    yield from dbt.cli(["build"], context=context).stream()
-
-marketplace_dw_job = define_asset_job(name="marketplace_dw_job", selection="*")
-
-marketplace_schedule = ScheduleDefinition(
-    job=marketplace_dw_job,
-    cron_schedule="0 0 * * *",
-    execution_timezone="America/Bogota"
-)
+from dagster import Definitions
+from dagster_dbt import DbtCliResource
+from dagster_project.assets.bronze import create_bronze_tables, load_raw_to_bronze
+from dagster_project.assets.dbt_assets import dbt_assets_def, DBT_PROJECT_DIR
+from dagster_project.assets.gold import create_foreign_keys
+from dagster_project.jobs import marketplace_dw_job, marketplace_schedule
 
 defs = Definitions(
-    assets=[dbt_assets_def],
+    assets=[create_bronze_tables, load_raw_to_bronze, dbt_assets_def, create_foreign_keys],
     schedules=[marketplace_schedule],
     resources={
         "dbt": DbtCliResource(project_dir=os.fspath(DBT_PROJECT_DIR)),

@@ -1,6 +1,6 @@
 locations:
   - location_name: marketplace_dw
-    code_from:
+    code_source:
       python_file: dagster_project/definitions.py
     working_directory: .
     executable_path: python
