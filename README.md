@@ -134,8 +134,7 @@ flowchart TD
 | 🥇 **Gold** | `fact_orders` + `dim_customer`, `dim_product`, `dim_seller`, `dim_time`, `dim_order_status` | Esquema estrella con PK/FK, listo para BI/análisis |
 
 ## 📂 Estructura del repositorio
-
-
+```
 marketplace_dw_project/
 ├── dagster_project/          # Definiciones de Dagster
 │   ├── assets/
@@ -151,9 +150,13 @@ marketplace_dw_project/
 │   │   └── gold/               # Dimensiones y tabla de hechos
 │   └── profiles.yml
 ├── etl_python/
-│   └── ge
-=======
-
+│   └── generate_sales_data.py # Generador de datos de prueba (Faker)
+├── data/raw/                  # CSV de origen
+├── img/                        # Diagramas e imágenes de arquitectura
+├── dagster.yaml / dagster_cloud.yaml
+├── Dockerfile
+└── requirements.txt
+```
 ## 🧬 Modelo entidad-relación (Supabase)
 
 Vista real del esquema en el editor de tablas de Supabase, con las relaciones entre `fact_orders` y sus dimensiones ya aplicadas por el asset `create_foreign_keys`:
