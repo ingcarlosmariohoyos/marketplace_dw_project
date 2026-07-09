@@ -22,7 +22,7 @@ Ingesta de ventas, productos y clientes → transformación con **dbt** → esqu
 - [Stack tecnológico](#-stack-tecnológico)
 - [Modelo de datos](#️-modelo-de-datos)
 - [Estructura del repositorio](#-estructura-del-repositorio)
-- [Requisitos previos](#-requisitos-previos)
+- [Requisitos previos](#-Requisitos-previos)
 - [Configuración](#-configuración)
 - [Uso](#️-uso)
 - [Despliegue](#️-despliegue)
