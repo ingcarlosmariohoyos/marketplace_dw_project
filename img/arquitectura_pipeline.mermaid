@@ -1,0 +1,69 @@
+flowchart TD
+
+    subgraph FUENTES["Fuentes de Datos (CSV)"]
+        direction LR
+        F1[amazon_sales.csv]
+        F2[amazon_products.csv]
+        F3[amazon_customers.csv]
+    end
+
+    subgraph DAGSTER["Orquestacion - Dagster Cloud (plan Serverless gratuito)"]
+        direction TB
+        SCH[["Schedule diario<br/>0 0 * * * America/Bogota"]]
+        A_BT["Asset: create_bronze_tables"]
+        A_LB["Asset: load_raw_to_bronze"]
+        A_DBT["Asset: dbt_assets_def<br/>(dbt build)"]
+        A_FK["Asset: create_foreign_keys<br/>(PK/FK)"]
+        SCH --> A_BT --> A_LB --> A_DBT --> A_FK
+    end
+
+    subgraph PG["Supabase (PostgreSQL) - Data Warehouse (SSL)"]
+
+        subgraph BRONZE["Bronze (raw)"]
+            BO[("bronze_orders")]
+            BP[("bronze_products")]
+            BC[("bronze_customers")]
+        end
+
+        subgraph SILVER["Silver - dbt staging"]
+            SS[("s_stg_sales")]
+            SP[("s_stg_products")]
+            SC[("s_stg_customers")]
+        end
+
+        subgraph GOLD["Gold - dbt star schema"]
+            FO[("fact_orders")]
+            DC[("dim_customer")]
+            DP[("dim_product")]
+            DSel[("dim_seller")]
+            DT[("dim_time")]
+            DOS[("dim_order_status")]
+        end
+    end
+
+    F1 --> A_LB
+    F2 --> A_LB
+    F3 --> A_LB
+
+    A_LB --> BO
+    A_LB --> BP
+    A_LB --> BC
+
+    BO --> SS
+    BP --> SP
+    BC --> SC
+
+    SP --> DP
+    SC --> DC
+    SS --> DSel
+
+    SS --> FO
+    DC --> FO
+    DP --> FO
+    DSel --> FO
+    DT --> FO
+    DOS --> FO
+
+    A_DBT -. genera .-> SILVER
+    A_DBT -. genera .-> GOLD
+    A_FK -
