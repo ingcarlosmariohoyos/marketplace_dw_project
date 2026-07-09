@@ -256,8 +256,8 @@ Lineage completo del pipeline en la UI de Dagster: ingesta a Bronze, modelos de 
 ## 📬 Contacto
 
 **Carlos Hoyos**
-📧 carloshoyos26@gmail.com
-🔗 _(agrega aquí tu LinkedIn / GitHub / portafolio)_
+📧 [carloshoyos26@gmail.com](mailto:carloshoyos26@gmail.com)
+🔗 [LinkedIn](https://www.linkedin.com/in/carlosmario-hoyosrios) · [GitHub](https://github.com/ingcarlosmariohoyos)
 
 ---
 
