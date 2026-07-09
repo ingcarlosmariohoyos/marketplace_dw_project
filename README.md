@@ -38,6 +38,8 @@ Ingesta de ventas, productos y clientes → transformación con **dbt** → esqu
 - **100% cloud y gratuito**: PostgreSQL en Supabase + orquestación en Dagster Cloud (plan Serverless).
 - **Documentado y reproducible**: diagrama de arquitectura versionado, generador de datos sintéticos incluido y setup en minutos.
 
+---
+
 ## 🏗️ Arquitectura
 
 ```mermaid
@@ -114,11 +116,15 @@ flowchart TD
 
 📄 Diagrama editable: [`arquitectura_pipeline.mermaid`](./arquitectura_pipeline.mermaid)
 
+---
+
 ## ⚙️ Requisitos previos
 
 - Python 3.9+
 - Cuenta de [Supabase](https://supabase.com) con una base de datos PostgreSQL
 - Cuenta de [Dagster Cloud](https://dagster.io/cloud) (opcional, solo para desplegar en la nube)
+
+---
 
 ## 🚀 Configuración
 
@@ -143,6 +149,8 @@ DB_SCHEMA=public
 ```
 > ⚠️ El `.env` está en `.gitignore` — nunca subas credenciales al repositorio.
 
+---
+
 ## ▶️ Uso
 
 **Generar datos de prueba** (opcional, ya existen CSV de ejemplo en `data/raw/`):
@@ -166,12 +174,13 @@ cd dbt
 dbt build
 ```
 
+---
+
 ## ☁️ Despliegue
 
 El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cloud.yaml`) usando el plan Serverless gratuito, y también incluye un `Dockerfile` para levantar el webserver de Dagster en un contenedor propio si se prefiere.
 
-## 📬 Contacto
-
+---
 
 ## 🧰 Stack tecnológico
 
@@ -184,6 +193,8 @@ El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cl
 | 🧪 Datos de prueba | Faker |
 | 📦 Contenerización | Docker |
 
+----
+
 ## 🗃️ Modelo de datos
 
 | Capa | Tablas | Propósito |
@@ -191,6 +202,8 @@ El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cl
 | 🥉 **Bronze** | `bronze_orders`, `bronze_products`, `bronze_customers` | Datos crudos cargados tal cual desde los CSV |
 | 🥈 **Silver** | `s_stg_sales`, `s_stg_products`, `s_stg_customers` | Staging con tipado, limpieza y filtros básicos (dbt) |
 | 🥇 **Gold** | `fact_orders` + `dim_customer`, `dim_product`, `dim_seller`, `dim_time`, `dim_order_status` | Esquema estrella con PK/FK, listo para BI/análisis |
+
+---
 
 ## 📂 Estructura del repositorio
 ```
@@ -216,11 +229,16 @@ marketplace_dw_project/
 ├── Dockerfile
 └── requirements.txt
 ```
+
+---
+
 ## 🧬 Modelo entidad-relación (Supabase)
 
 Vista real del esquema en el editor de tablas de Supabase, con las relaciones entre `fact_orders` y sus dimensiones ya aplicadas por el asset `create_foreign_keys`:
 
 ![Modelo entidad-relación en Supabase](./img/base_de_datos.png)
+
+---
 
 ## 📊 Grafo de assets en Dagster
 
@@ -228,6 +246,9 @@ Lineage completo del pipeline en la UI de Dagster: ingesta a Bronze, modelos de 
 
 ![Grafo de assets en Dagster](./img/orquestador.png)
 
+---
+
+## 📬 Contacto
 
 **Carlos Hoyos**
 📧 carloshoyos26@gmail.com
