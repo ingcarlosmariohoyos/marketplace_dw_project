@@ -17,19 +17,22 @@ Ingesta de ventas, productos y clientes → transformación con **dbt** → esqu
 
 ## 📑 Contenido
 
-- [Highlights](#-highlights)
-- [Arquitectura](#️-arquitectura)
-- [Stack tecnológico](#-stack-tecnológico)
-- [Modelo de datos](#️-modelo-de-datos)
-- [Estructura del repositorio](#-estructura-del-repositorio)
-- [Requisitos previos](#-Requisitos-previos)
-- [Configuración](#-configuración)
-- [Uso](#️-uso)
-- [Despliegue](#️-despliegue)
-- [Contacto](#-contacto)
+- [Highlights](#highlights)
+- [Arquitectura](#arquitectura)
+- [Requisitos previos](#requisitos-previos)
+- [Configuración](#configuración)
+- [Uso](#uso)
+- [Despliegue](#despliegue)
+- [Stack tecnológico](#stack-tecnológico)
+- [Modelo de datos](#modelo-de-datos)
+- [Estructura del repositorio](#estructura-del-repositorio)
+- [Modelo entidad-relación](#modelo-entidad-relación-supabase)
+- [Grafo de assets en Dagster](#grafo-de-assets-en-dagster)
+- [Contacto](#contacto)
 
 ---
 
+<a id="highlights"></a>
 ## ✨ Highlights
 
 - **Pipeline ELT end-to-end** con arquitectura medallion (Bronze → Silver → Gold) sobre datos transaccionales de e-commerce.
@@ -40,18 +43,17 @@ Ingesta de ventas, productos y clientes → transformación con **dbt** → esqu
 
 ---
 
+<a id="arquitectura"></a>
 ## 🏗️ Arquitectura
 
 ```mermaid
 flowchart TD
-
     subgraph FUENTES["Fuentes de Datos (CSV)"]
         direction LR
         F1[amazon_sales.csv]
         F2[amazon_products.csv]
         F3[amazon_customers.csv]
     end
-
     subgraph DAGSTER["Orquestacion - Dagster Cloud (plan Serverless gratuito)"]
         direction TB
         SCH[["Schedule diario<br/>0 0 * * * America/Bogota"]]
@@ -61,21 +63,17 @@ flowchart TD
         A_FK["Asset: create_foreign_keys<br/>(PK/FK)"]
         SCH --> A_BT --> A_LB --> A_DBT --> A_FK
     end
-
     subgraph PG["Supabase (PostgreSQL) - Data Warehouse (SSL)"]
-
         subgraph BRONZE["Bronze (raw)"]
             BO[("bronze_orders")]
             BP[("bronze_products")]
             BC[("bronze_customers")]
         end
-
         subgraph SILVER["Silver - dbt staging"]
             SS[("s_stg_sales")]
             SP[("s_stg_products")]
             SC[("s_stg_customers")]
         end
-
         subgraph GOLD["Gold - dbt star schema"]
             FO[("fact_orders")]
             DC[("dim_customer")]
@@ -85,39 +83,34 @@ flowchart TD
             DOS[("dim_order_status")]
         end
     end
-
     F1 --> A_LB
     F2 --> A_LB
     F3 --> A_LB
-
     A_LB --> BO
     A_LB --> BP
     A_LB --> BC
-
     BO --> SS
     BP --> SP
     BC --> SC
-
     SP --> DP
     SC --> DC
     SS --> DSel
-
     SS --> FO
     DC --> FO
     DP --> FO
     DSel --> FO
     DT --> FO
     DOS --> FO
-
     A_DBT -. genera .-> SILVER
     A_DBT -. genera .-> GOLD
     A_FK -. aplica PK/FK .-> GOLD
 ```
 
-📄 Diagrama editable: [`arquitectura_pipeline.mermaid`](./arquitectura_pipeline.mermaid)
+📄 Diagrama editable: [`arquitectura_pipeline.mermaid`](./img/arquitectura_pipeline.mermaid)
 
 ---
 
+<a id="requisitos-previos"></a>
 ## ⚙️ Requisitos previos
 
 - Python 3.9+
@@ -126,6 +119,7 @@ flowchart TD
 
 ---
 
+<a id="configuración"></a>
 ## 🚀 Configuración
 
 1. Clona el repositorio e instala dependencias:
@@ -137,6 +131,7 @@ python -m venv venv
 ./venv/Scripts/activate   # En Windows
 pip install -r requirements.txt
 ```
+
 2. Crea un archivo `.env` en la raíz del proyecto con las credenciales de tu base de datos Supabase:
 
 ```
@@ -147,10 +142,12 @@ DB_USER=postgres
 DB_PASSWORD=tu_password
 DB_SCHEMA=public
 ```
+
 > ⚠️ El `.env` está en `.gitignore` — nunca subas credenciales al repositorio.
 
 ---
 
+<a id="uso"></a>
 ## ▶️ Uso
 
 **Generar datos de prueba** (opcional, ya existen CSV de ejemplo en `data/raw/`):
@@ -176,12 +173,14 @@ dbt build
 
 ---
 
+<a id="despliegue"></a>
 ## ☁️ Despliegue
 
 El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cloud.yaml`) usando el plan Serverless gratuito, y también incluye un `Dockerfile` para levantar el webserver de Dagster en un contenedor propio si se prefiere.
 
 ---
 
+<a id="stack-tecnológico"></a>
 ## 🧰 Stack tecnológico
 
 | Capa | Herramienta |
@@ -193,8 +192,9 @@ El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cl
 | 🧪 Datos de prueba | Faker |
 | 📦 Contenerización | Docker |
 
-----
+---
 
+<a id="modelo-de-datos"></a>
 ## 🗃️ Modelo de datos
 
 | Capa | Tablas | Propósito |
@@ -205,7 +205,9 @@ El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cl
 
 ---
 
+<a id="estructura-del-repositorio"></a>
 ## 📂 Estructura del repositorio
+
 ```
 marketplace_dw_project/
 ├── dagster_project/          # Definiciones de Dagster
@@ -232,6 +234,7 @@ marketplace_dw_project/
 
 ---
 
+<a id="modelo-entidad-relación-supabase"></a>
 ## 🧬 Modelo entidad-relación (Supabase)
 
 Vista real del esquema en el editor de tablas de Supabase, con las relaciones entre `fact_orders` y sus dimensiones ya aplicadas por el asset `create_foreign_keys`:
@@ -240,6 +243,7 @@ Vista real del esquema en el editor de tablas de Supabase, con las relaciones en
 
 ---
 
+<a id="grafo-de-assets-en-dagster"></a>
 ## 📊 Grafo de assets en Dagster
 
 Lineage completo del pipeline en la UI de Dagster: ingesta a Bronze, modelos de dbt (Silver → Gold) y aplicación de llaves foráneas:
@@ -248,6 +252,7 @@ Lineage completo del pipeline en la UI de Dagster: ingesta a Bronze, modelos de 
 
 ---
 
+<a id="contacto"></a>
 ## 📬 Contacto
 
 **Carlos Hoyos**
