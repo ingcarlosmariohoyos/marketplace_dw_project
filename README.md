@@ -1,8 +1,44 @@
-# Marketplace DW
+<div align="center">
 
-Data warehouse de un marketplace estilo Amazon, construido con arquitectura **medallion** (Bronze → Silver → Gold). El pipeline ingiere datos crudos de ventas, productos y clientes, los transforma con **dbt** y los deja listos para análisis en un esquema estrella sobre **PostgreSQL (Supabase)**, todo orquestado con **Dagster Cloud**.
+# 🛒 Marketplace DW
 
-## Arquitectura
+**Data warehouse de un marketplace estilo Amazon**, construido con arquitectura **medallion** (Bronze → Silver → Gold).
+Ingesta de ventas, productos y clientes → transformación con **dbt** → esquema estrella listo para análisis, todo orquestado con **Dagster**.
+
+[![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![dbt](https://img.shields.io/badge/dbt-core-FF694B?logo=dbt&logoColor=white)](https://www.getdbt.com/)
+[![Dagster](https://img.shields.io/badge/Dagster-Cloud%20Serverless-6E4AFF?logo=dagster&logoColor=white)](https://dagster.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+
+</div>
+
+---
+
+## 📑 Contenido
+
+- [Highlights](#-highlights)
+- [Arquitectura](#️-arquitectura)
+- [Stack tecnológico](#-stack-tecnológico)
+- [Modelo de datos](#️-modelo-de-datos)
+- [Estructura del repositorio](#-estructura-del-repositorio)
+- [Requisitos previos](#-requisitos-previos)
+- [Configuración](#-configuración)
+- [Uso](#️-uso)
+- [Despliegue](#️-despliegue)
+- [Contacto](#-contacto)
+
+---
+
+## ✨ Highlights
+
+- **Pipeline ELT end-to-end** con arquitectura medallion (Bronze → Silver → Gold) sobre datos transaccionales de e-commerce.
+- **Orquestación basada en assets** con Dagster: dependencias declarativas, materialización y schedule diario automatizado.
+- **Modelado dimensional** en dbt: staging limpio + esquema estrella (1 tabla de hechos, 5 dimensiones) con integridad referencial (PK/FK).
+- **100% cloud y gratuito**: PostgreSQL en Supabase + orquestación en Dagster Cloud (plan Serverless).
+- **Documentado y reproducible**: diagrama de arquitectura versionado, generador de datos sintéticos incluido y setup en minutos.
+
+## 🏗️ Arquitectura
 
 ```mermaid
 flowchart TD
@@ -76,31 +112,28 @@ flowchart TD
     A_FK -. aplica PK/FK .-> GOLD
 ```
 
-El diagrama editable está en [`arquitectura_pipeline.mermaid`](./arquitectura_pipeline.mermaid).
+📄 Diagrama editable: [`arquitectura_pipeline.mermaid`](./arquitectura_pipeline.mermaid)
 
-## Stack tecnológico
+## 🧰 Stack tecnológico
 
 | Capa | Herramienta |
 |---|---|
-| Orquestación | Dagster (Dagster Cloud, plan Serverless gratuito) |
-| Transformación | dbt (dbt-core + dbt-postgres) |
-| Almacenamiento | PostgreSQL alojado en Supabase |
-| Ingesta / scripting | Python (pandas, SQLAlchemy, psycopg2) |
-| Generación de datos de prueba | Faker |
+| 🎛️ Orquestación | Dagster (Dagster Cloud, plan Serverless gratuito) |
+| 🔄 Transformación | dbt (dbt-core + dbt-postgres) |
+| 🗄️ Almacenamiento | PostgreSQL alojado en Supabase |
+| 🐍 Ingesta / scripting | Python (pandas, SQLAlchemy, psycopg2) |
+| 🧪 Datos de prueba | Faker |
+| 📦 Contenerización | Docker |
 
-## Modelo de datos
+## 🗃️ Modelo de datos
 
-**Bronze** — datos crudos cargados tal cual desde los CSV:
-`bronze_orders`, `bronze_products`, `bronze_customers`
+| Capa | Tablas | Propósito |
+|---|---|---|
+| 🥉 **Bronze** | `bronze_orders`, `bronze_products`, `bronze_customers` | Datos crudos cargados tal cual desde los CSV |
+| 🥈 **Silver** | `s_stg_sales`, `s_stg_products`, `s_stg_customers` | Staging con tipado, limpieza y filtros básicos (dbt) |
+| 🥇 **Gold** | `fact_orders` + `dim_customer`, `dim_product`, `dim_seller`, `dim_time`, `dim_order_status` | Esquema estrella con PK/FK, listo para BI/análisis |
 
-**Silver** — staging con tipado, limpieza y filtros básicos (dbt):
-`s_stg_sales`, `s_stg_products`, `s_stg_customers`
-
-**Gold** — esquema estrella para análisis (dbt), con llaves primarias y foráneas aplicadas por el asset `create_foreign_keys`:
-- `fact_orders` (tabla de hechos)
-- `dim_customer`, `dim_product`, `dim_seller`, `dim_time`, `dim_order_status`
-
-## Estructura del repositorio
+## 📂 Estructura del repositorio
 
 ```
 marketplace_dw_project/
@@ -118,67 +151,4 @@ marketplace_dw_project/
 │   │   └── gold/               # Dimensiones y tabla de hechos
 │   └── profiles.yml
 ├── etl_python/
-│   └── generate_sales_data.py # Generador de datos de prueba (Faker)
-├── data/raw/                  # CSV de origen
-├── dagster.yaml / dagster_cloud.yaml
-├── Dockerfile
-└── requirements.txt
-```
-
-## Requisitos previos
-
-- Python 3.9+
-- Cuenta de [Supabase](https://supabase.com) con una base de datos PostgreSQL
-- Cuenta de [Dagster Cloud](https://dagster.io/cloud) (opcional, solo para desplegar en la nube)
-
-## Configuración
-
-1. Clona el repositorio e instala dependencias:
-
-```bash
-git clone <url-del-repo>
-cd marketplace_dw_project
-python -m venv venv
-./venv/Scripts/activate   # En Windows
-pip install -r requirements.txt
-```
-
-2. Crea un archivo `.env` en la raíz del proyecto con las credenciales de tu base de datos Supabase:
-
-```
-DB_HOST=xxxxx.supabase.co
-DB_PORT=5432
-DB_NAME=postgres
-DB_USER=postgres
-DB_PASSWORD=tu_password
-DB_SCHEMA=public
-```
-
-> El `.env` está en `.gitignore` — nunca subas credenciales al repositorio.
-
-## Uso
-
-**Generar datos de prueba** (opcional, ya existen CSV de ejemplo en `data/raw/`):
-
-```bash
-python etl_python/generate_sales_data.py
-```
-
-**Levantar Dagster en local:**
-
-```bash
-dagster dev -f dagster_project/definitions.py
-```
-
-Desde la UI de Dagster (`http://localhost:3000`) puedes materializar los assets manualmente o dejar que corran con el schedule diario (`00:00 America/Bogota`).
-
-**Ejecutar solo dbt:**
-
-```bash
-cd dbt
-dbt build
-```
-
-## Despliegue
-
-El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cloud.yaml`) usando el plan Serverless gratuito, y también incluye un `Dockerfile` para levantar el webserver de Dagster en un contenedor propio si se prefiere.
+│   └── ge
