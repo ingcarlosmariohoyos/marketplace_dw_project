@@ -114,61 +114,6 @@ flowchart TD
 
 📄 Diagrama editable: [`arquitectura_pipeline.mermaid`](./arquitectura_pipeline.mermaid)
 
-## 🧰 Stack tecnológico
-
-| Capa | Herramienta |
-|---|---|
-| 🎛️ Orquestación | Dagster (Dagster Cloud, plan Serverless gratuito) |
-| 🔄 Transformación | dbt (dbt-core + dbt-postgres) |
-| 🗄️ Almacenamiento | PostgreSQL alojado en Supabase |
-| 🐍 Ingesta / scripting | Python (pandas, SQLAlchemy, psycopg2) |
-| 🧪 Datos de prueba | Faker |
-| 📦 Contenerización | Docker |
-
-## 🗃️ Modelo de datos
-
-| Capa | Tablas | Propósito |
-|---|---|---|
-| 🥉 **Bronze** | `bronze_orders`, `bronze_products`, `bronze_customers` | Datos crudos cargados tal cual desde los CSV |
-| 🥈 **Silver** | `s_stg_sales`, `s_stg_products`, `s_stg_customers` | Staging con tipado, limpieza y filtros básicos (dbt) |
-| 🥇 **Gold** | `fact_orders` + `dim_customer`, `dim_product`, `dim_seller`, `dim_time`, `dim_order_status` | Esquema estrella con PK/FK, listo para BI/análisis |
-
-## 📂 Estructura del repositorio
-```
-marketplace_dw_project/
-├── dagster_project/          # Definiciones de Dagster
-│   ├── assets/
-│   │   ├── bronze.py         # Carga de CSV a Bronze
-│   │   ├── dbt_assets.py     # Ejecuta `dbt build`
-│   │   └── gold.py           # Aplica PK/FK sobre Gold
-│   ├── definitions.py
-│   └── jobs.py                # Job + schedule diario
-├── dbt/                        # Proyecto dbt (Silver + Gold)
-│   ├── models/
-│   │   ├── bronze/            # Definición de sources
-│   │   ├── silver/            # Modelos de staging
-│   │   └── gold/               # Dimensiones y tabla de hechos
-│   └── profiles.yml
-├── etl_python/
-│   └── generate_sales_data.py # Generador de datos de prueba (Faker)
-├── data/raw/                  # CSV de origen
-├── img/                        # Diagramas e imágenes de arquitectura
-├── dagster.yaml / dagster_cloud.yaml
-├── Dockerfile
-└── requirements.txt
-```
-## 🧬 Modelo entidad-relación (Supabase)
-
-Vista real del esquema en el editor de tablas de Supabase, con las relaciones entre `fact_orders` y sus dimensiones ya aplicadas por el asset `create_foreign_keys`:
-
-![Modelo entidad-relación en Supabase](./img/base_de_datos.png)
-
-## 📊 Grafo de assets en Dagster
-
-Lineage completo del pipeline en la UI de Dagster: ingesta a Bronze, modelos de dbt (Silver → Gold) y aplicación de llaves foráneas:
-
-![Grafo de assets en Dagster](./img/orquestador.png)
-
 ## ⚙️ Requisitos previos
 
 - Python 3.9+
@@ -226,6 +171,63 @@ dbt build
 El proyecto está configurado para desplegarse en **Dagster Cloud** (`dagster_cloud.yaml`) usando el plan Serverless gratuito, y también incluye un `Dockerfile` para levantar el webserver de Dagster en un contenedor propio si se prefiere.
 
 ## 📬 Contacto
+
+
+## 🧰 Stack tecnológico
+
+| Capa | Herramienta |
+|---|---|
+| 🎛️ Orquestación | Dagster (Dagster Cloud, plan Serverless gratuito) |
+| 🔄 Transformación | dbt (dbt-core + dbt-postgres) |
+| 🗄️ Almacenamiento | PostgreSQL alojado en Supabase |
+| 🐍 Ingesta / scripting | Python (pandas, SQLAlchemy, psycopg2) |
+| 🧪 Datos de prueba | Faker |
+| 📦 Contenerización | Docker |
+
+## 🗃️ Modelo de datos
+
+| Capa | Tablas | Propósito |
+|---|---|---|
+| 🥉 **Bronze** | `bronze_orders`, `bronze_products`, `bronze_customers` | Datos crudos cargados tal cual desde los CSV |
+| 🥈 **Silver** | `s_stg_sales`, `s_stg_products`, `s_stg_customers` | Staging con tipado, limpieza y filtros básicos (dbt) |
+| 🥇 **Gold** | `fact_orders` + `dim_customer`, `dim_product`, `dim_seller`, `dim_time`, `dim_order_status` | Esquema estrella con PK/FK, listo para BI/análisis |
+
+## 📂 Estructura del repositorio
+```
+marketplace_dw_project/
+├── dagster_project/          # Definiciones de Dagster
+│   ├── assets/
+│   │   ├── bronze.py         # Carga de CSV a Bronze
+│   │   ├── dbt_assets.py     # Ejecuta `dbt build`
+│   │   └── gold.py           # Aplica PK/FK sobre Gold
+│   ├── definitions.py
+│   └── jobs.py                # Job + schedule diario
+├── dbt/                        # Proyecto dbt (Silver + Gold)
+│   ├── models/
+│   │   ├── bronze/            # Definición de sources
+│   │   ├── silver/            # Modelos de staging
+│   │   └── gold/               # Dimensiones y tabla de hechos
+│   └── profiles.yml
+├── etl_python/
+│   └── generate_sales_data.py # Generador de datos de prueba (Faker)
+├── data/raw/                  # CSV de origen
+├── img/                        # Diagramas e imágenes de arquitectura
+├── dagster.yaml / dagster_cloud.yaml
+├── Dockerfile
+└── requirements.txt
+```
+## 🧬 Modelo entidad-relación (Supabase)
+
+Vista real del esquema en el editor de tablas de Supabase, con las relaciones entre `fact_orders` y sus dimensiones ya aplicadas por el asset `create_foreign_keys`:
+
+![Modelo entidad-relación en Supabase](./img/base_de_datos.png)
+
+## 📊 Grafo de assets en Dagster
+
+Lineage completo del pipeline en la UI de Dagster: ingesta a Bronze, modelos de dbt (Silver → Gold) y aplicación de llaves foráneas:
+
+![Grafo de assets en Dagster](./img/orquestador.png)
+
 
 **Carlos Hoyos**
 📧 carloshoyos26@gmail.com
